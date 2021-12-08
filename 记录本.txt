@@ -227,17 +227,159 @@ JAVA编写的程序采用big endian方式存储数据
 big endian：低存高，高存低		0x12345678
 small endian：低存低，高存高	0x78563412
 
+虚拟内存地址技术	处理内存地址
+主要是简化程序的编写以及方便操作系统对进程间内存的隔离管理
+虚拟内存地址与物理内存地址
+MMU
+一个硬件，由于在机器语言层面都是采用虚拟地址，当实际的机器码程
+序涉及到内存操作时，需要根据当前进程运行的实际上下文将虚拟地址
+转换为物理内存地址，才能实现对真实内存数据的操作。
+User Space
+Stack：栈区域，自高地址向低地址增长
+Mapping Area：这里是与mmap系统调用相关的区域。自高地址向低地址
+Heap：堆区，自低地址向高地址增长
+Bss：存放的是未初始化的全局变量
+Data：存放的是初始化后的全局变量
+Code：这是整个用户空间的最低地址部分，存放的是指令
+brk与sbrk
+int brk(void *addr);
+void * sbrk(intptr_t increment);
+按页大小对齐
+资源限制与rlimit
+系统对每一个进程所分配的资源不是无限的，因此每一个进程都有一个
+rlimit表示当前进程可用的资源上限。这个限制可以通过getrlimit系统
+调用得到
+int main ( ) {
+     struct rlimit * limit = ( struct rlimit * ) malloc ( sizeof ( struct rlimit ) ) ;
+     getrlimit ( RLIMIT_AS , limit ) ;
+     printf ( "soft limit: %ld, hard limit: %ld\n" , limit -> rlim_cur , limit -> rlim_max ) ;
+}
+struct rlimit {
+     rlim_t rlim_cur ;    /* Soft limit */
+     rlim_t rlim_max ;    /* Hard limit (ceiling for rlim_cur) */
+} ;
+
+手势识别，具体计数可以大概分成三种——ToFu技术，结构光计数以及毫米波雷达的技术
+ToF（Time of Flight）全程飞行时间
+	是一种通过光线的传播时间来测量距离的技术。
+	需要一个能够发射光线的装置和接收光线的感应装置
+结构光技术
+	基本原理与ToFu技术类似，所不同之处在于其采用的是具有点线面等
+	模式图案的光
+	包括红外激光发射器，红外传感器，色彩传感器以及实感图像处理芯片
+	三角测距原理
+毫米波雷达
+	原理同样与ToF技术基本相同，只不过用于测量的介质从光线变成了无线电波
+	
+电流或变化的电场都可以产生磁场
+麦克斯韦方程组中的全电流定律
+
+12/7
+书读百遍，其意自见
+努力将书中有用的东西转换成自己内在
+将学到的东西用于实践中
+自主思考，主见
+重复阅读就是不断认识和认识不断提高的过程
+精勤求学 精勤指专心勤勉，求学意为探求学问
+敦笃励志 敦笃指敦厚笃实，励志指集中心思致力于某种事业
+果毅力行 果毅指果敢坚毅，力行一是指竭力而行，二是指努力实践
+忠恕任事 忠恕是儒家伦理道德的基本范畴，任事一是称职，胜任所担当的职责
+读书不是为了雄辩和反驳，也不是为了轻信和盲从，而是为了思考和权衡
+苏格拉底说：承认自己的无知才是开启智慧的大门
+涵泳
+
+UART（universal asynchronous receiver/transmitter)
+USART （universal synchronous/asynchronous receiver/transmitter）
+serial communication		串行通信
+parallel communication		并行通信
+COM口和RS232
+TTL（transistor-transistor logical）晶体管-晶体管逻辑集成电路
+
+递归是将一个问题划分成多个子问题求解，动态规划也是如此，但是动态
+规划会把子问题缓存起来，从而避免重复求解子问题
+递归是一种解决问题的有效方法，在递归过程中，函数将自身作为子例程调用
+递归程序应包含2个属性
+1、基本情况，保证程序调用及时返回，不再继续递归，保证程序可终止
+2、递推关系
+
+对数的定义
+如果 ，即a的x次方等于N（a>0，且a≠1），那么数x叫做以a为底N的对数（logarithm），
+记作。其中，a叫做对数的底数，N叫做真数，x叫做“以a为底N的对数”。
+特别地，我们称以10为底的对数叫做常用对数（common logarithm），并记为lgN。
+称以无理数e（e=2.71828…）为底的对数称为自然对数（natural logarithm），并记为lnN。
+零没有对数。 
+在实数范围内，负数无对数。  在虚数范围内，负数是有对数的。
+事实上，当，，则有e(2k+1)πi+1=0，所以ln(-1)的具有周期性的多个值，ln(-1)=(2k+1)πi。
+这样，任意一个负数的自然对数都具有周期性的多个值。例如：ln(-5)=(2k+1)πi+ln 5。 
+
+12/8
+GPIO: general peripheral input/output,通用的外设输入输出接口
+在GPIO内部，一般都有一个方向选择寄存器，里面每一位用来控制一个引脚的方向
+在GPIO内部，一般都有一个数据寄存器，里面每一位都用来控制一个引脚的输出电平
+
+二极管
+二极管的电流具有单向性，正向导通，反向截止
+当V大于某个阈值，二极管就导通，导通时电阻约等于0
+当V<0，二极管不会导通，电阻无穷大
+由PN节组成，P代表正极（positive）N代表负极（negative）
+二极管中流动的是电子，电流方向是从正极到负极，电子流动的方向是从负极到正极
+
+三极管
+物质会从浓度大的地方扩散到浓度低的地方
+NPN
+PNP
+
+同步与异步
+synchronous 
+	时钟信号：用来通知对方要接收数据了
+	数据信号：用来传输数据
+asynchronous 
+	数据信号：只需要数据信号，不需要时钟信号
+	使用异步信号传输数据时，双方遵守相同的约定
+	起始信号
+	数据的表示
+	结束信号
+
+芯片内部的三极管，被称为open collector，开集，也就是芯片内部的
+三极管的集电极是开放的。芯片内部不驱动三极管时，集电极的电平由
+外面的上拉电阻决定
+
+title
+features
+description
+table of contents
+pin configuration and functions 
+absolute maximum
+electrical characteristics
+typical characteristics
+functional block diagram
+feature description
+typical application
+layout guide 
+packaging information
+package outline 
+example layout 
+软件工程师更关注寄存器，协议等
 
 
+int add2(int x,int y){
+	return x+y;
+}
+typedef int(*FUN)(int,int);
+FUN func = &add2;
+func();
 
 
+太多的信息记不住
+喜欢有规律的信息
+结构化思维
 
 
+ static char *classes = "WSU";
+    char letter = classes[1];
+        printf("%c\n",letter);
 
 
-
-
-
-
-
-
+int array[4][4]		// 二维数组
+int (*array)[4]		
+		
