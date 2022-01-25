@@ -600,3 +600,30 @@ Cellular 蜂窝
 孟郊《登科后》
 昔日龌龊不足夸，今朝放荡思无涯。
 春风得意马蹄疾，一日看尽长安花。
+
+assert() 
+断言函数（宏），用于在调试过程中捕捉程序错误
+void assert(int expression);
+assert()会对表达式expression进行检测：
+·如果expression的结果为0（条件不成立），那么断言失败，表明程序出错，assert()会向标准输出设备，打印一条错误信息，并调用abort()函数终止程序的执行
+·如果expression的结果为非0（条件成立），那么断言成功，表明程序正确，assert()不进行任何操作。
+在assert.h头文件中的源码，assert()的定义形式
+#ifdef NDEBUG
+#define assert(e) ((void)0)
+#else
+#define assert(e)  \
+    ((void) ((e) ? ((void)0) : __assert (#e, __FILE__, __LINE__)))
+#endif
+
+简单示例
+#include <stdio.h>
+#include <assert.h>
+int main()
+{
+	int m,n,result;
+	scanf("%d %d",&m,&n);
+	assert(n != 0);  // assert(n) 更简洁
+	result = m / n;
+	printf("result = %d\n",result);
+	return 0;
+}
