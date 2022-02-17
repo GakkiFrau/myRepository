@@ -539,7 +539,6 @@ I/O口的功能大致分为输入，输出以及输入输出双向三大类。
 	任何一个器件都可以作为主机。
 	
 
-
 icircuit
 everycircuit.com
 
@@ -552,7 +551,7 @@ EEPROM
 色环电阻的第一条色环(通常靠近电阻端头的)表示阻值的第一位数字、
 第二条色环表示阻值的第二位数字、第三条色环表示阻值的第三未数字、
 第四条色环表示阻值乘数的10的倍数、第五条色环：误差。
-首先，四环和五环的区别在于，少了一环为有效数学而已;其它的读法差不多，
+首先，四环和五环的区别在于，少了一环为有效数字而已;其它的读法差不多，
 按照四环电阻的读数表格操作，第一位颜色是红色，依次为红色，黑色，金色。
 从左向右数，第一道色环表示阻值的最大一位数字，第二道色环表示阻值的第
 二位数字，第三道色环表示阻值倍乘的数，第四道色环表示阻值允许的偏差(精度)。
@@ -627,3 +626,95 @@ int main()
 	printf("result = %d\n",result);
 	return 0;
 }
+
+
+CPU  central processing unit 	 中央处理器
+GPU  Graphics processing unit    图形处理器
+TPU	 tensor processing unit 	 张量处理器
+NPU  neural network processing unit   神经网络处理器
+
+
+三八译码器
+	三个端口控制八个引脚输出
+
+	
+LDO（low Dropout Regulator），低压差线性稳压器，
+PCB（printed circuit board），印制电路板
+
+P：比例	存在最大静态误差，系统振荡
+I：积分	消除静态误差
+D：微分 滞后系统，预先处理，减小振荡
+位置式PID	积累误差大
+增量式PID
+
+指针and数组
+[] = *()
+arr[1] = *(arr+1);
+arr数组名，是一个标签，数组首地址，arr+1先偏移1个步长，然后* 解引用
+
+
+SPI 
+what 串行外围设备接口，是一种通信协议，用于单片机之间或
+	其他硬件外围设备的数据交换。
+	8位 MSB first，LSB last		Most Significant Bit，Last Significant Bit
+	SCK，MOSI，MISO三个引脚
+	SP0 SP1 SP2 SP3 四种模式 由 CPOL CPHA决定
+		CPOL位控制SPI时钟空闲状态，CPHA控制时钟接收数据的边缘方向
+
+
+LDO(low dropout regulator)
+一般使用的电源芯片无非就是LDO和DC-DC
+LDO 
+低压差线性稳压器，
+低压差：输出压差比较低，例如输入3.3V，输出可以达到3.2V
+线性：LDO内部的MOS管工作于线性电阻
+稳压器：说明LDO的用途是用来给电源稳压
+LDO工作原理：通过运放调节P-MOS的输出
+	LDO核心架构：P-MOS＋运放，通过芯片内部已经设置好的电阻
+				来调节P-MOS的输出
+				
+#ifdef __cplusplus
+extern "C" {
+#endif
+为了在C++代码中调用用C写成的库文件，就需要用extern "C"来高速编译器：
+这是一个用C写成的库文件，请用C的方式来链接它们。
+extern "C"表示编程生成的内部符号名使用C约定。
+因为C++支持函数重载，而C不支持函数重载，两者语言的编译规则不一样。
+编译器对函数名的处理方法也不一样。假如有这一个函数原型
+void func(int a, int b){
+	... //code
+}
+可能在C++编译之后会产生_func_int_int之类的名字，因为C++支持函数重载， 
+而C编译之后，可能为_func
+
+
+演绎（Deduction）
+所谓演绎法或称演绎推理（Deductive reasoning）是指人们以一定的反映客观规律的理论认识为依据，
+从服从该认识的已知部分推知事物的未知部分思维方法。是由一般到个别的认识方法。演绎法是认识“隐
+性”知识的方法
+
+演绎推理有三段论，假言推理和选言推理等形式
+三段论，是指由两个简单判断作前提，和一个简单判断作结论组成的推理。
+三段论中包含三个部分：一是大前提；二是小前提；三是结论。
+运用三段论，其前提一般应是真实的，符合客观实际的，否则就推不出正确的结
+例：
+·大前提：所有人都会死
+·小前提：苏格拉底是人
+·结论：苏格拉底会死
+
+
+
+learning by doing 
+code by hand
+ask for help		stack overflow  滴滴踏步厂
+keep calm
+keep going
+《C primer plus》
+《C++ primer plus》
+《UNIX网络编程》
+《零基础写编程系列之C语音》
+仔细研究Apache源码
+
+
+
+
