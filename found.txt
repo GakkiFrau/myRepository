@@ -1,0 +1,377 @@
+12/9    the first day
+① 自动生成区间随机数
+rand() 范围 [0,RAND_MAX]
+利用srand()和rand()函数
+srand((unsigned int)time(NULL)) 生成随机种子，然后rand()%n 生成[0,n)的随机数
+有公式可循：
+rand()%(b-a)+a         ---> [a,b)
+rand()%(b-a+1)+a       ---> [a,b]
+若想生成小数，则又有
+x+1.0 *(rand()%RAND_MAX)/RAND_MAX*(y-x)     ---> [x,y)
+x+1.0 *rand()%RAND_MAX * (y-x)              ---> [x,y]
+
+② 值传递和地址传递
+void swap(int a,int b)
+void swap(int *a,int *b)
+
+③ 当float类型的负数并且区间在[-1,0]，加上一个非负整数，相当于减去1
+  unsigned int ua = 100;
+  float fa = -0.00001;
+  ua = ua+fa;
+  printf("%u\n",ua);        // 99 
+
+④ 数组指针与指针数组
+  int (*arr)[4]     // 数组指针     () 优先级大于 []
+  int *arr[4]       // 指针数组     [] 优先级大于 *
+  
+⑤ typedef
+  typedef char * pchar;
+  typedef const char * PCHAR;
+  当typedef是定义了一种类型的新别名，不是简单的字符串替换，当遇到const时，如下。
+  如果 函数参数想定义为 const char *  常量指针
+  int myStrCmp(const pchar,const pchar); // 结果与预期会发生差别，变成 char * const 指针常量
+  int myStrCmp(PCHAR,PCHAR)    // 结果与预期一样 是 const char * 常量指针
+  typedef 在编译时被解释，可利用其来实现代码简化
+  typedef int (*PF)(const char *,const char *);  //这个声明引入了 PF 类型作为函数指针的同义字
+  PF Register(PF pf); //Register() 的参数是一个 PF 类型的回调函数，返回某个函数的地址，其署名与先前注册的名字相同
+  如果不用typedef,则有如下：
+  int (*Register(int (*pf)(const char *,const char *)))(const char *,const char *);
+
+12/13
+① 位域
+C语言的一种数据类型，就是在结构体中定义时，后面加上冒号以及只使用的字节数
+结构体
+struct STR{
+    unsigned int width;
+    unsigned int length;
+}str;
+/*占用空间8个字节*/
+位域结构体
+struct STR{
+  unsigned int width:1;
+  unsigned int length:2;
+}str;
+/*占用空间4个字节*/
+注：位域长度不能超过它数据类型的最大长度，并且当位域赋值时不能超出位域定义的范围。
+
+struct BITREGION{
+    int iA : 16;
+    char cB;
+   
+}; /*占用空间8个字节*/
+struct BITREGION{
+    int iA : 15;
+    char cB;
+   
+}; /*占用空间4个字节*/
+
+struct BITREGION{
+    int iA : 5;
+    unsigned : 0; /* 空域 */
+    char cB;      /*从下一单元开始存放*/
+   // float fC;   /*浮点占4个字节*/
+}; /*占用空间8个字节*/
+
+② 函数指针
+指针变量，指向的是一个函数
+函数指针可以像一般函数一样，调用，传递参数。
+typedef int (* FuncPtr)(int ,int);
+int max(int x,inty){
+  return x>y?x:y;
+}
+FuncPtr func = max;
+func(2,3);
+回调函数
+函数指针作为某个函数的参数，就是通过一个函数指针调用的函数
+/*回调函数*/
+void populatearray(int *array,int sizeArray,int (*getvalue)(void)){
+  for(int i = 0;i < sizeArray;i++){
+    array[i] = getvalue();
+  }
+}
+int getvalue(void){
+  return rand();
+}
+main()
+{
+  int array[10];
+  populatearray(array,10,getvalue);
+  ...
+}
+
+12/18
+
+① 编程思想
+设计函数时，可充分利用参数以及宏（宏定义，#if #else #endif）来达到条件的设定，功能的实现
+#define Config_GMLed_Inti 1
+
+void LED_Color(const uint8_t OnOff)
+{
+#if Config_GMLed_Inti           /****** #if ******/
+    if(OnOff < 2){
+      LED = OnOff;
+    }
+    else if(OnOff == 2){
+      LED = ~LED;
+    }
+#else                          /****** #else ******/
+    if(OnOff);
+#endif                         /****** #endif ******/
+}
+
+② malloc() and realloc()
+#include <stdlib.h>
+void *malloc(size_t size);
+param: size -- 内存块的大小，以字节为单位 
+return:  返回一个指针，指向已经分配大小的内存，如果请求失败，则返回 NULL
+
+void *realloc(void *ptr,size_t size);
+param: ptr -- 指针指向一个要重新分配内存的内存块，该内存块之前是通过调用 malloc、calloc 或 realloc 
+            进行分配内存的。如果为空指针，则会分配一个新的内存块，且函数返回一个指向它的指针。
+     : size -- 内存块的新的大小，以字节为单位，如果大小为 0 ，且 ptr 的内存块是一个已存在的，
+            则 ptr 所指向的内存块被释放，并返回一个空指针。
+return：返回一个指针，指向重新分配大小的内存，如果请求失败，则返回 NULL
+
+12/21
+① 鸡尾酒排序
+设立bottom and top
+bottom赋值数组左边的值，top赋值数组右边的值
+每次排序，先左边，再右边。
+详见cocktail.c文件
+...
+while(SWITCH){
+for(i = botton;i<top;i++){
+            if(a[i] > a[i+1]){
+                swap(&a[i],&a[i+1]);
+                SWITCH = 1;
+            }
+        }
+        top = top -1;
+        for(i = top;i>botton;i--){
+            if(a[i] < a[i-1])
+            {
+                swap(&a[i],&a[i-1]);
+                SWITCH = 1;
+            }
+        }
+        botton = botton +1;
+}
+
+② strcmpy()函数与一个字符比较
+char answer[] = "y";
+if(strcmpy(answer,"y") == 0){ ... }
+
+12/28
+① 二分法
+二分法框架
+int binarySearch(int [] nums,int target){
+  int left = 0, right = ...;
+
+  while(...){
+    int mid = (right + left)/2;
+    if(nums[mid] == target){
+      ...
+    }
+    else if(nums[mid] < target){
+      left = ...
+    }
+    else if(nums[mid] > target){
+      right = ...
+    }
+  }
+  return ...;
+}
+
+② 弧度与度的关系
+弧度：两条射线从圆心向圆周射出，形成一个夹角和夹角正对的一段弧，当弧长正好等于圆的半径时，两条
+    射线形成的夹角大小为一弧度
+度：两条射线从圆心向圆周射出，形成一个夹角和夹角正对的一段弧。当这段弧正好等于圆周长的1/360时，
+    两条射线的夹角为1度
+1度＝π/180 弧度 ( ≈0.017453弧度 ) 
+因此，得到 把度化成弧度的公式： 
+       弧度＝度×π/180 
+1弧度＝180°/π （≈57.3°） 
+因此，可得到 把弧度化成度的公式： 
+       度＝弧度×180°/π 
+
+12/31
+① ADC的基本转换原理分为四个过程
+抗混叠滤波，
+采样保持电路
+量化
+编码
+模拟信号通过ADC转换成数字信号的这一过程称为量化
+由于量化输出的数字信号位数有限，所以输出的数字信号和你采样得到的模拟信号会有一个误差，
+被称为量化误差,对于一个N位ADC来说，假设其满量程电压为Vref，Vref被ADC分为2N个区间，
+区间宽度用LSB（last significant bit）表示LSB=Vref/2N。
+ADC的分类
+逐次比较型ADC
+双积分式ADC
+
+22/1/6
+①C语言关键字指volatile
+什么是？
+volatile用于声明一个变量，告诉编译器该变量容易发生改变，在编译，读取，存储该变量时都不要做任何优化
+因此编译后的程序每次需要存储或读取这个变量的时候，都会直接从变量地址中读取存储数据，不做优化
+嵌入式开发时，这个关键字作用很大，因为有时候变量地址有可能时系统的一个外设地址，他的值得变化并不在
+程序控制范围内，随时可能变化，因此需要对它声明，每次读取或者存储直接对地址进行操作，而不经过其他中间商。
+GCC优化等级
+-00：（默认）没有优化
+-0或-01：优化，但不要花费太多的时间
+-02：更积极地优化
+-03：最积极地优化
+-0fast：最高级地优化
+-0s：优化代码大小
+-0g：在尽量不干扰调试地情况下优化
+开启不同的等级优化，程序编译后的结果就会发生一定的变化，而volatile就是在开启优化的情况下使用，
+保护变量不被优化
+当我们使用volatile对一个映射到外部寄存器的地址进行声明后，如果像连续赋值来传数据给外部
+寄存器，使用volatile声明就可以保护指令不会被优化，程序实现正常功能，当然除了对寄存器
+的保护外，volatile有时也会使用在多线程之间共享变量的保护，如果不注意，编译器会认为
+变量只在当前函数使用而进行优化，在其他任务中进行的改变就变的无效；如果中断中改变一个
+状态变量给其他函数进行检测，如果没有加volatile进行声明，也可能会因为编译器的优化而
+无效。
+
+22/1/7
+①定时器工作原理
+定时器根据时钟的输出信号，每隔1S(单位时间)，计数单元的数值就增加1，当计数单元数值
+增加到“设定的闹钟提醒时间”时，计数单元就会向中断系统发出申请。产生“响铃提醒”，使
+程序跳转到中断服务函数中执行
+时钟周期：
+时钟周期T是时序中最小的时间单位，时钟周期 = 1/时钟源频率
+机器周期：
+单片完成一个操作的最短时间。机器周期是针对汇编语言而言，在汇编语言程序下每执行一条
+语句所需要的时间都是机器周期的整数倍。而且语句占用的时间是可以计算出来的。而C语言
+一条语句的执行时间是不确定的。受到诸多因素的影响。
+②三八译码器 74HC138
+
+22/1/13
+①IIC通信
+IIC通信高位在前，低位在后，UART通信低位在前，高位在后
+起始信号，数据传输，停止信号
+起始信号：SCL为高电平，SDA由高变低（下降沿）
+数据传输：SCL为低电平，SDA允许变化，SCL高电平，SDA保持稳定
+停止信号：SCL为高电平，SDA由低变高（上升沿）
+
+22/1/21
+①三态门
+三态是指高电平，低电平，高阻态
+三态门可以实现线与，也被广泛应用于总线传输
+②u = dw/dq
+ i = dq/dt
+ p = dw/dt
+ p = u*i 
+基尔霍夫电流定律
+基尔霍夫电压定律
+
+22/2/15
+①dBm的定义
+在通信工程中，功率的大小通常是用dBm值来表示的，是一个对数度量，被定义为
+相对于1mW参考功率电平的分贝，即dBm代表每毫瓦贝。因此它是一个无量纲单位
+dBm = 10 * log（P / 1mW）
+其中P代表以瓦特为单位的功率。
+如果功率每增加10倍：
+1 mW = 0 dBm，
+10 mW = 10 dBm，也就是说，功率每增加十倍就会变大10 dBm
+如果功率每增加2倍：
+1 mW = 0 dBm，
+2 mW = 3 dBm，也就是说，功率每增加2倍就会变大3dBm
+②PLL
+锁相环(Phase-Locked Loop)
+特点：利用外部输入的参考信号控制环路内部振荡信号的频率和相位。因锁相环
+    可以实现输出信号频率对输入信号频率的自动跟踪，所以锁相环通常用于
+    闭环跟踪电路。
+    当输出信号频率与输入信号的频率相等时，输出电压与输入电压保持固定的
+    相位差值，即输出电压与输入电压的相位被锁住，这就是锁相环名称的由来
+    锁相环通常由鉴相器（PD，Phase Detector），环路滤波器（LF，Loop Filter)
+    压控振荡器（VCO，Voltage Controlled Oscillator）三部分组成。
+③DLL
+延迟锁相环(Delay Locked Loop)
+用在数字电路中，用来自动调节一路信号的延时。使两路信号的相位一致（边沿对齐）
+在某些数字信号（比如data bus上的信号）与系统时钟同步的情况下，DLL将两路
+clock的边沿对齐（实际上是使被调节的clock滞后系统clock整数个周期），用被
+调节的clock做控制信号，就可以产生于系统时钟严格同步的信号
+
+22/2/22
+①枚举定义
+利用typedef声明枚举别名
+typedef enum{
+    HAL_KEY_EVT_IDLE            = 0x0000,
+    HAL_KEY_EVT_PRESS           = 0x0002,
+    HAL_KEY_EVT_RELEASE         = 0x0004,
+    HAL_KEY_EVT_LONG_PRESS      = 0x0010,
+    HAL_KEY_EVT_LONG_RELEASE    = 0x0020,
+}Key_evt_t;
+Key_evt_t Key_evt;
+利用Key_evt的值做判断处理，switch(Key_evt)或if(Key_evt);
+
+22/2/23
+①定义一个结构体类型，然后用结构体声明变量，对其进行操作。
+作为函数参数，返回值，或者进行条件判断。
+
+②变量及函数名的命名规范
+驼峰命名法：    int myData;    int getData(void);
+帕斯卡命名法：  int MyData;    int GetData(void);
+匈牙利命名法：  int iData;     int g_iData; //全局变量   static int s_iData; //静态变量   int iGetData(void);
+下划线命名法：  int my_data;    int get_data(void);
+写底层代码（单片机、驱动一类的）就用下划线；上层代码就用帕斯卡和驼峰法（变量用驼峰法，函数名，结构体，类用帕斯卡）
+exclusive:
+variable    // 变量用驼峰命名法，静态变量用匈牙利命名法
+    uint8_t ledOn;
+    uint8_t ledOff;
+    uint8_t ledAlter;
+    uint8_t ledPwnUp;
+    uint8_t ledPwnDown;
+    static int s_value; 
+    static float s_upFlag;
+    static float s_downFlag;
+pointer    // 指针用匈牙利加下划线
+    int * p_Data;   
+constant   // 常量，数字用全大写
+    #define MONTH 12 
+    #define DAY_PER_YEAR 365
+structure   // 结构体用帕斯卡和下划线最后加一个小s; 结构体变量用帕斯卡和下划线; 结构体成员用驼峰命名法
+    typedef struct{
+      uint32_t capacity;
+      uint32_t heatCapacity;
+      uint8_t *p_Data;
+    }Flash_Chip_s;
+    Flash_Chip_s Flash_Chip;
+    Flash_Chip_s *P_Flash_Chip;
+enum    // 枚举用帕斯卡和下划线最后加一个小e; 枚举变量用帕斯卡和下划线; 枚举成员用全大写和下划线
+    typedef enum{
+      GPIO_INPUT = 0,
+      GPIO_OUTPUT,
+    }Gpio_Dir_e;
+    Gpio_Dir_e Gpio_Dir;
+union    // 共用体用帕斯卡和下划线最后加一个小u; 共用体变量用帕斯卡和下划线；共用体成员用驼峰命名法
+    typedef union{
+      uint16_t inVaild;
+      uint16_t reason;
+    }Cap_Find_u;
+    Cap_Find_u Cap_Find;
+function 
+    void hal_gpio_write(Gpio_Pin_e Pin, uint8_t En)
+    bool hal_gpio_read(Gpio_Pin_e Pin,Gpio_Dir_e Type);
+    int hal_gpio_pin_init(Gpio_Pin_e Pin,Gpio_Dir_e Type);
+
+22/2/24 
+①数组与指针
+    int array1[6] = {1,2,3,4,5,6};      // 数组     
+    int array2[4] = {9,8,7,6};
+    
+    int (*pf)[] = &array1;              // 数组指针 -- 指向数组的指针 
+    printf("%d\n",(*pf)[i]);            // 循环打印
+
+    int *array[2] = {array1,array2};    // 指针数组 -- 存放指针的数组
+    printf("%d\n",array[0][i]);         // 循环打印
+    printf("%d\n",array[1][j]);
+
+    int *(*arr)[] = &array;             // 指针数组指针 -- 指向存放指针的数组的指针
+    printf("%d\n",(*arr)[0][i]);        // 循环打印
+    printf("%d\n",(*arr)[1][j]);
+    
+    
+
+
+

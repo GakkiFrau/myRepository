@@ -1,0 +1,228 @@
+	2021/11/3
+
+PWM
+what：脉冲宽度调制（PWM），简称脉宽调制，是利用微处理器的数字输出来对模拟电路
+	进行控制的一种非常有效的计数，广泛应用从测量，通信到功率控制与变换的许多领域
+
+PWM的频率：是指一秒钟内信号从高电平到低电平再回到高电平的次数（一个周期）
+	也就是一秒钟PWM有多少个周期
+	单位：Hz
+	
+PWM的周期：T=1/f
+	50Hz = 20ms 一个周期 
+	
+占空比：是一个脉冲周期内，高电平时间与整个周期时间的比例
+	单位：%
+	表示方法：20%
+	
+波特率：数据传输速率用波特率来表示，单位bps(bits per second)
+		常见9600bps，115200bps
+		如果串口波特率设置为9600bps，那么传输一个比特需要时间
+		是 1/9600 = 104.2us
+	
+	
+	
+	温度值 来源：ADC
+	ADC的配置
+	
+
+	
+
+////////////////////////////////////////
+
+信息就是位+上下文
+
+
+
+IHRC:
+单片机的时钟信号由外部振荡和内部振荡两种方式取得。 在引脚XTAL1和
+XTAL2外接晶振振荡器或陶瓷谐振器，就构成了单片机的内部振荡方式。
+由于单片机内部有一个高增益反相放大器，当外接晶振后，就构成了自激
+振荡器，并产生振荡时钟脉冲。 单片机的外部振荡方式时把已有的时钟信
+号引入单片机内。这种方式适宜用来使单片机的时钟与外部信号一致。
+
+SSH（安全外壳协议）
+Secure Shell的缩写，SSH为建立在应用层基础上的安全协议。SSH是较可靠，
+专为远程登陆会话和其他网络服务提供安全性的协议。
+利用SSH协议可以有效防止远程管理过程中的信息泄露问题。
+功能：通过SSH，你可以把所有传输的数据进行加密，这样“中间人”这种攻击
+	方式就不可能实现了，而且也能够防止DNS欺骗和IP欺骗。
+	使用SSH，还有一个好处就是传输的数据是经过压缩的，所以可以加快传
+	输的速度。SSH有很多功能，它既可以替代Telnet，又可以为FTP，PoP，
+	甚至为PPP提供一个安全的通道。
+
+SSH-TRANS 传输层协议
+SSH-USERAUTH 用户认证协议
+SSH-CONNECT 连接协议
+scp（远程拷贝）
+slogin（远程登陆）
+sftp（安全文件传输）
+
+服务端一般是sshd进程
+# ps -waux | grep sshd 
+查看sshd是否已经被正确的运行了
+
+PID算法
+
+对数的定义
+如果 ，即a的x次方等于N（a>0，且a≠1），那么数x叫做以a为底N的对数（logarithm），
+记作。其中，a叫做对数的底数，N叫做真数，x叫做“以a为底N的对数”。
+特别地，我们称以10为底的对数叫做常用对数（common logarithm），并记为lgN。
+称以无理数e（e=2.71828…）为底的对数称为自然对数（natural logarithm），并记为lnN。
+零没有对数。 
+在实数范围内，负数无对数。  在虚数范围内，负数是有对数的。
+事实上，当，，则有e(2k+1)πi+1=0，所以ln(-1)的具有周期性的多个值，ln(-1)=(2k+1)πi。
+这样，任意一个负数的自然对数都具有周期性的多个值。例如：ln(-5)=(2k+1)πi+ln 5。 
+
+
+差分传输
+
+斐波那契数列
+
+优先级
+从高到低：. -> ++(后缀) --(后缀) ! ++(前缀) --(前缀) *(间接访问) &(取值)
+
+递归是将一个问题划分成多个子问题求解，动态规划也是如此，但是动态
+规划会把子问题缓存起来，从而避免重复求解子问题
+递归是一种解决问题的有效方法，在递归过程中，函数将自身作为子例程调用
+递归程序应包含2个属性
+1、基本情况，保证程序调用及时返回，不再继续递归，保证程序可终止
+2、递推关系
+
+UART（universal asynchronous receiver/transmitter)
+USART （universal synchronous/asynchronous receiver/transmitter）
+serial communication		串行通信
+parallel communication		并行通信
+COM口和RS232
+TTL（transistor-transistor logical）晶体管-晶体管逻辑集成电路
+
+
+RTX51 Tiny
+
+最多消耗code 900字节，DATA７字节，不需要占用XDATA
+一个任务需要占堆栈三字节
+上下文切换700机器周期
+
+内核：
+RTX51 Tiny 可以分为三部分：RTX kernel，system ISR/Task和User ISR/Task 
+————————————————
+RTX Kernel，称为微内核，微内核由汇编代码编写，有最基本的任务调度器，
+提供了基础的任务创建、删除、切换、通信等OS API，可选的任务调度
+方式有协助调度（os_wait / os_switch_task）和时间片（Round-Robin）
+两种，在一个内存RAM只有128 / 256字节的C51系列单片机内完成了RTOS的
+最基本的功能。
+————————————————
+System，微内核中已经提供的系统ISR和Task
+————————————————
+User，用户定义的ISR和Task
+————————————————
+
+任务：
+RTX51 Tiny中被调度的单位称为任务，它拥有属于自己的资源，能够
+相对独立地运行，在代码上表现为关键字_task_和对应数字ID的一个
+无参数，无返回值的死循环函数。
+void Task_Name(void) _task_ 0 
+{
+	while(1){
+		// do something
+	}
+}
+以上表示0号任务，RTX51 Tiny的任务数量最多为16，标号为0~15，
+规定第一个执行的任务编号为0，相当于main()函数，要注意，任务
+一定是无参数，无返回值和不能返回的，如果任务只执行一次，那么
+可以不是一个死循环函数，但是最后必须用os_delete_task()删除
+任务（一般是0号任务，负责创建其他任务后就删除自己），换言之，
+任务一定不能返回
+
+调度器
+RTX51 Tiny本质上是一个任务切换器
+具有两种调度方式，协助调度和时间片调度
+
+任务状态
+就绪态（ready）
+运行态（running）
+阻塞态（waiting）
+超时态（timeout）
+死亡态（delete）
+
+API
+创建删除：os_create_task, os_delete_task
+通讯：isr/os_send_signal, os_clear_signal, os_wait/wait1/wait2
+	os_reset_interval
+调度：isr/os_set_ready, os_switch_task 
+其他：os_running_task_id 
+API 的前缀有ISR和OS两种，ISR表明此API只能在中断中使用，OS表明此
+API只能在任务中使用。
+
+
+
+LDO 线性稳压器
+DCDC
+
+
+//验证大小端
+#include <stdio.h>
+​
+typedef unsigned int  uint32_t;
+typedef unsigned char uint8_t;
+​
+union bit32_data
+{
+    uint32_t data;
+    struct 
+    {
+        uint8_t byte0;
+        uint8_t byte1;
+        uint8_t byte2;
+        uint8_t byte3;
+    }byte;
+};
+​
+int main(void)
+{
+    union bit32_data num;
+    
+    num.data = 0x12345678;
+    
+    if (0x78 == num.byte.byte0)
+    {
+        printf("Little endian\n");
+    }
+    else if (0x78 == num.byte.byte3)
+    {
+        printf("Big endian\n");
+    }else{}
+​
+    return 0;
+}
+
+AHB		Advanced High-performance Bus
+APB		Advanced Peripheral Bus
+FPU		Floating Point Unit
+I2C		Inter-Integrated Circuit
+I2S		Integrated Interchip Sound
+JTAG	Joint Test Access Group (IEEE standard)
+SWD		Serial Wire DAP
+MPU		Memory Protection Unit
+NVIC	Nested vector Interrupt Controller
+SPI		Serial Peripheral Interface
+SRAM	Static Random Access memory
+UART 	Universal Asynchronous Receiver and Transmitter
+WDT		Watchdog Timer
+
+
+高斯频移键控GFSK - Gauss frequency Shift Keying ，
+是在调制之前通过一个高斯低通滤波器来限制信号的频谱宽度。
+	高斯低通滤波器
+		加权平均
+GFSK调制可以分为直接调制和正交调制2种方式
+ASK ——幅移键控调制，把二进制符号0和1分别用不同的幅度来表示。
+FSK ——频移键控调制，即用不同的频率来表示不同的符号。如2KHz表示0，3KHz表示1。
+GMSK——高斯滤波最小频移键控，是在MSK（最小频移键控）调制器之前插入高斯低通预调制滤波器的一种调制方式。
+
+
+
+
+
+
+

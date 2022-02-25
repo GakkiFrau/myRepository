@@ -1,0 +1,543 @@
+PHY
+蓝牙
+资料汇总文件
+SDK文件夹->6222->example->ble_central(主机)、ble_mesh(组网)、ble_multi()、
+ble_peripheral(从机)、periheral(外设)、PhyPlusPhy(2.4G)
+ble_peripheral(从机)->bleUart_AT(蓝牙透传)、simpleBlePeripheral(简单示例)...
+工具->PhyPlusKit(烧录软件)
+文档(重点关注)->应用指南->6222、bleUart_AT软件流程、PHY蓝牙连接流程
+
+osal操作系统，非抢占，实时操作系统，分层，一个大while循环中，按标志位
+执行。
+osal_start_system()里有一个while循环
+taskID 任务号
+每个任务里都定义了一个16位变量，相当于16个事件，以0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080...形式定义位
+
+#define SYS_EVENT_MSG 0x8000     0x8000任务间调度，系统保留
+
+timeout_value	时间段，ms级的
+
+添加任务，按照格式添加，即在任务数组中添加回调函数func(taskID++),然后函数实现
+
+几个常用的api函数
+osal_set_event()
+osal_set_event()
+osal_clear_event()
+osal_start_timerEx()	一次调用，调用一次执行一次
+osal_start_reload_timer()		周期调用，调用一次多次执行
+定时：①中断定时		精准
+	  ②osal函数		有1ms左右误差
+
+任务间的消息发送
+osal_msg_send()
+osal_msg_receive()
+
+g_largeHeap[]   堆释放开辟
+
+内部外部时钟都可以，外部较精准
+不建议在线断点调试，蓝牙可能会断连，建议日志打印
+
+添加服务与手机通信
+addserve()
+需要特征服务，特征声明，特征值，特征描述
+
+手机发送设备接收，进行解码操作
+设备发送到手机，有两种方式notify和indicate
+notify没有响应，indicate有响应，发送失败有提示
+GATT_Notification
+GATT_Indication
+
+烧录时，...最后按复位键进行烧录
+GAP ROLE 5 代表连接上
+
+低功耗模式
+CPU休眠模式		设定宏，一段时间自动唤醒(事件唤醒)
+关机模式		需要重启，中断唤醒
+
+	  
+g_system_clk = SYS_CLK_XTAL_16M;  系统时钟，可倍频到32M，64M
+g_clk32K_config = CLK_32K_RCOSC;	时钟选择，内部时钟
+
+tasksARR[] 任务函数添加在这个数组里
+osalInitTasks()	funcInit(taskID++)放里面
+
+
+
+
+
+
+
+PHY6222
+Bluetooth 5.2/IEEE 802.15.4 System on Chip
+ARM Cortex-M0 32-bit processor with SWD 
+memory
+	128kb-8mb in-system flash memory 
+	64kbSRAM 可编程保持睡眠模式
+	4路高速缓冲存储器并有8kb缓冲RAM
+	96KB ROM 
+	256bit efuse
+22 general purpose I/O pins(22个GPIO引脚)
+	关机/睡眠模式下GPIO状态保持
+	设置串行接口和可编程IO多功能映射
+	所有引脚能被设置唤醒
+	所有引脚能够触发中断
+	三个正交解码器
+	6通道PWM
+	2通道PDM（脉冲密度调制）/IIC/SPI/UART
+	4通道DMA
+DMIC/AMIC with microphone bias
+8通道12位ADC带有低噪声语音PGA
+6通道32位定时器，一个看门狗定时器
+Real Timer Counter（RTC）
+电源，时钟，复位控制器
+灵活的电源管理
+	Operating Voltage range 1.8V to 3.6V (工作电压)
+	Embedded buck DC-DC and LDOs（嵌入式buck DC-DC和IDOs） 
+	Battery monitor（电池检测器）
+功耗
+	0.3uA 关机模式（IO仅仅唤醒）
+	1uA 休眠模式with 32KHz RTC 
+	12uA 休眠模式with 32KHz RTC 和所有的SRAM 保留
+	接收模式：4mA @ 3.3V电压支持
+	发送模式：4.6mA(0dBm output power)@3.3V power supply
+	MCU：60uA/MHz
+RC振荡器硬件校准
+	内部高速/低速频率的RC振荡器
+	32KHz RC振荡器用于RTC +/-500ppm精度
+	32MHz RC振荡器用于3%精度的HCLK
+高速吞吐量
+	支持BLE 2Mbps的协议
+	支持数据长度的扩展
+	吞吐量高达1.6Mbps(DLE+2Mbps)
+AoA/AoD测向
+支持SIG-Mesh特征
+	友节点
+	低功率节点
+	代理节点
+	中继节点
+2.4GHz收发器
+	符合蓝牙5.2 
+	灵敏度
+		99dBm@BLE 1Mbps data rate 
+		105dBm@BLE 125Kbps data rate 
+		103dBm@IEEE 802.15.4 250Kbps data rate 
+	TX Power -20 to +10dBm in 3dB steps	
+	单脚天线不需要RF匹配或RX/TX切换  
+	信号强度（RSSI）(1dB resolution)
+	天线阵列和可选的芯片外RF PA/LNA控制接口  
+AES-128加密硬件
+链路层的硬件
+	自动包装配
+	自动报文检测和验证
+	自动重新发送
+	自动响应
+	硬件地址匹配
+	随机数发生器
+工作温度
+	-40~85°C（用户）
+	-40~105°C（工业）
+应用：可穿带设备，信号灯，家和建筑，健康医疗，工业和制造业
+	零售和支付，数据传输，PC/mobile/TV外围设备，Internet of thing(loT)——物联网
+	
+
+BATT 1.8~3.6V 
+
+low power features（低功耗特性）
+
+
+clock gate state
+CPU执行WFI/WFE进入clock gate state。从clock gate state唤醒之后，
+CPU从哪里停止就从哪里继续执行程序。唤醒源包括中断和事件。
+唤醒源根据应用通过软件被设置。
+
+system sleep state 
+唤醒源包括：
+IO 
+RTC 
+RESET 
+UVLO reset
+
+system off state 
+IOs 
+RESET 
+UVLO reset 
+
+UVLO (低电压锁定)
+低压关断，欠压关断模式是当供电电压低于IC的开启门限电压时的一种保护
+模式。欠压关断模式可保证在IC供电电压不足时不至于被损坏。一个UVLO电路
+可确保IC在电池电压未达到安全操作电压前不会激活，UVLO的功能会展示滞后
+现象，以确保在电源供应上的噪音不会不慎导致系统故障。
+UVLO的迟滞功能是为了防止电压在UVLO那一点的时候，出现振荡，所以会迟滞
+
+state　transition（状态转换）
+进入clock gate state 和 唤醒
+	CPU执行WFI/WFE 
+进入睡眠/关机状态和唤醒
+PM寄存器识别CPU是否在mirror mode 或者 FLASH mode在睡眠或关机。
+并且记录映射和矢量。CPU设置相应的PM寄存器令芯片进入sleep mode。
+唤醒之后，芯片进入boot mode 在ROM中执行boot code。ROM code检查
+mode 在sleep/off 和remap信息，执行相应的配置，和开始执行程序。
+
+Interrupts  
+interrupt name 			M0 interrupt number
+
+Clock Management
+这里有两个晶振时钟源：16MHz 晶体振荡器（XT16M）和32.768KHz晶体振荡器（XT32k）
+芯片上也有两个RC振荡器：32MHz RC振荡器（RC32M）和32KHz RC振荡器（RC23k)
+RC32M被用作主时钟，一个片上DLL生成更高速频率的时钟像32/48/96MHz
+
+蓝牙设备可以包括多个Profile，一个Profile中有多个Service，一个Service
+中有多个Characteristic，一个Characteristic中包括一个Value和多个Descriptor
+
+Electrical 电路
+supply voltage（Vdd）    min:1.71     typical:2.5    max:3.6
+current consumption		
+		High resolution mode(RES = 1)			145uA 
+		Low power mode(RES = 0)					10uA 
+		Standby									0.9uA 
+IIC communication rate						3.4MHz
+SPI communication rate						10MHz
+
+IOMUX 
+	IOMUX 提供了更灵活的I/O配置，作为大多数的外设端口能被配置和映射
+	到physical I/O pads的任何地方
+		这些外设包括IIC 0-1，UART0-1，PWM 0-5，SPI 0-1...
+	34个 configurable pads (P00 to P07 and P09 to P34)
+		P08 是TM pin——测试模式引脚
+	第一个列是IO pad映射的默认模式，当没有IOMUX功能被选择的时候和没有
+		特定目标外设例如模拟IO，GPIO<0:3>,按键扫描被使能。在这个模式下，
+		pin<0:3>被用作JTAG
+		In JTAG mode, data output for JTAG test mode is mapped to P00; data input for JTAG test mode is 
+		mapped to P01; mode control input for JTAG test mode is mapped to P02; clock input for JTAG test 
+		mode is mapped to P03
+
+GPIO
+	P00-P34连接到PortA 
+	所有的PortA 支持唤醒和防反跳的功能，但只有18个PortA引脚支持中断
+	每一个GPIO引脚能被拉高到VDD3(3.3V)或拉低到GND通过添加上拉或下拉电阻
+	
+Peripheral Blocks
+	2.4GHz Radio 
+	Timer/Counters(TIMER)
+	Real Time Counter(RTC)
+		24 bit Counter, 12 bit(1/x)prescaler, capture/compare registers
+		a tick event generator for low power, tickless RTOS implementation
+	AES-ECB Encryption(ECB)
+		support 128 bit AES encryption
+	Watching Timer(WDT)
+	SPI(SPI0,SPI1)	
+		SPI interface support 3 serial synchronous protocols 
+		主机从机操作模式被PERI_MASTER_SELECT寄存器控制
+		1  SPI1 
+		0  SPI0 
+	IIC(IIC0,IIC1)	
+		support 100KHz,and 400KHz modes, it also supports 7-bit address
+		and 10-bit address.
+	UART(UART0,UART1)	
+	
+	DMIC/AMIC Data Path (又称双/立体声数字麦克风接口)
+		这种接口允许两个麦克风共享一个公共的时钟与数据线。每个麦克风
+		被配置为在时钟信号的不同沿产生各自的输出。这样两个麦克风的输
+		出就能保持相互同步，设计师就能确保来自每个通道的数据被同时捕
+		获到。
+	Pulse Width Modulation(PWM)	
+		6个PWM通道
+		主时钟16MHz,2to128预分配器，16 bit counter
+		Freq_PWM = 16MHz/(N_prescaler * N_top_count);
+		Duty_cycle_PWM = N_threshold/N_top_count;
+		16 bit top_count, 16 bit threshold count, 3 bit prescaler count,
+		PWM polarity, PWM mode, PWM enable and PWM load enable(load new settings)
+		6个PWM通道可被独立编程通过寄存器地址是(0x4000_E004 to 0x0000_E044).
+	Quadrature Decoder(QDEC)正交解码器
+	Key Scan(KSCAN)
+		按键扫描支持16行18列的按键矩阵
+		支持多按键按下或单按键按下
+		de-bounce time(按键时间被认为是有效的)form 0 to 128ms with 255us step
+		有效的按键按下能触发中断当按键扫描中断被使能时。
+		在keyscan中断服务完成后，向中断状态寄存器位写入1可以清除状态位。 
+		按键扫描有manual mode(手动模式) 和 auto mode(自动模式)
+		manual mode相对较慢并且需要CPU处理
+	ADC with PGA(Programmable Gain Amplifier)
+		12bit SAR ADC 有总共10个输入
+		PGA Path
+			PGA提供了42dB gain 范围从0dB 到42dB in 3dB steps.
+		ADC Path 
+			ADC 默认设置成manual mode，在这个模式下，ADC时钟率可被设置
+			成80K/160K/320K取样每秒。选择输入对并将其配置为微分或单端(正负)。
+			默认是微分。使能之后，ADC会采样在设置的时钟频率和储存数据
+			到一个与通道有关的内存位置，每个通道内存大小128字节，当存满
+			中断会被标记。每12bit采样占据2Byte内存空间。
+			ADC同样也可以被设置成auto channel sweep mode通过设置
+			“adc_ctrl_override” bit为0。
+			10ADC输入通道能被配置通过编程它们相应的寄存器。
+			它们的配置包括采样时间，使能/失能，微分/单端，和连续采样/单次
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+环境：6222开发板，J-lINK
+SDK：
+烧录工具：PhyPlusKit_V2.5.1d
+接线
+USB烧录
+VCC	---- 3.3V 
+GND ---- GND　
+P10	---- TX 
+P09	---- RX 
+TM 	---- 3.3V 
+RST	---- GND 
+
+		
+		
+		
+512K版本（dual bank)(Has FCT)
+OTA bootloader		5000~10fff		48K 
+App	Bank 			11000~1ffff		60K 
+XIP  				20000~33fff		80K 
+FS(UCDS) 			34000~35fff		8K 
+Resource			36000~7ffff		296K 
+FW Storage		 	80000~7ffff		0K 		
+		
+		
+		
+
+OS Abstract Layer(OSAL)
+App_main
+
+Osal_init_system		调用osalInitTasks()来初始化OSAL任务
+
+Osal_start_system		无限事件处理循环，每一个OSAL任务的事件处理函数被储存在数组taskArr[]
+
+没有RTOS，使用无限事件循环代替
+任务处理例程能被IRQ打破
+任务优先级：低索引的任务具有更高的优先级
+任务间的交互：能直接进行函数调用，事件和消息
+Osal task: 任务的ID被设置通过osalInitTask(),从0开始
+Osal Event: 每个任务有16位事件位映像
+事件循环
+Osal 定时器设置事件
+开始定时器
+单次：uint8 osal_start_timerEx(uint8 taskID,uint16 event_id,uint32 timeout_value);
+	开始一个应用 Timer，到达超时时间系统会向指定的 task 发送一个事件，该 timer 完成一次
+	事件之后自动关闭，不再重发。
+周期的：uint8 osal_start_reload_timer(uint8 taskID,uint16 event_id,uint32 timeout_value );
+	开始一个应用 Timer，到达超时时间系统会向指定的 task 发送一个事件，该类型 timer 在开
+	始之后会按照指定的时间间隔向 task 发送事件，直到函数 osal_stop_timerEx()停止该timer。
+停止定时器
+	停止一个应用 Timer。
+uint8 osal_stop_timerEx(uint8 task_id, uint16 event_id);
+获取定时器
+	获取一个正在运行 Timer 剩余的超时时间，时间单位为毫秒
+uint32 osal_get_timeoutEx(uint8 task_id,uint16 event_id);
+	
+Osal Message
+uint8 osal_msg_send(uint8 destination_task,uint8 *msg_ptr);
+uint8 *osal_msg_receive(uint8 task_id); // 接收消息，该函数应用在Task的
+事件处理函数里对应的事件位SYS_EVENT_MSG(0x8000)。这个事件是专门留给消息处理的
+收到事件 SYS_EVENT_MSG 之后再通过该函数获取消息指针，如果该消息的 buffer 是通过
+osal_mem_alloc 分配的，那么使用之后需要通过 osal_mem_free 释放。
+
+Osal Set Event 
+uint8 osal_set_event(uint8 task_id, uint16 event_flag);
+
+Osal Clear Event 
+uint8 osal_clear_event(uint8 task_id,uint16 event_flag);
+
+
+每个Task分别包含一个初始化函数和一个事件处理函数
+
+Clock 
+Clock模块主要提供系统时钟相关的配置，包括模块的时钟开关，32K时钟源
+选择等操作
+	CLK32K_e
+	32K时钟源选择
+	CLK_32K_XTAL	选择外部晶振作为32K时钟源
+	CLK_32K_RCOSC	选择内部RC作为时钟源
+		
+	APIs
+	void clk_gate_enable(MODULE_e module);	//使能硬件模块的时钟
+	void clk_gate_disable(MODULE_e module); // 关闭硬件模块的时钟
+	void clk_reset(MODULE_e module); // 重置模块
+	uint32_t clk_hclk(void);  // 获取HCLK数值
+	uint32_t clk_pclk(void);	//获取PCLK数值
+	void hal_rtc_clock_config(CLK32K_e clk32Mode);// 配置RTC的时钟源
+	...
+	
+retention SRAM 
+休眠模式下，SRAM可以根据需要配置为保持或者不保持数据。每块 SRAM 可以独立开
+关，如果配置为保持，休眠唤醒之后，RAM 数据能够保持，否则数据会丢失。
+一般在main.c的hal_init函数进行配置，参考API：hal_pwrmgr_RAM_retention(uint32_t sram);
+RAM ID: SRAM0(32K); SRAM1(32K); SRAM2(64K); SRAM3(8K); SRAM4(2K)
+
+GPIO 
+提供GPIO相关的操作，包括GPIO配置，上下拉设置，GPIO输入模式的事件驱动
+模型，GPIO唤醒操作等
+	GPIO pin定义
+		typedef enum{
+			GPIO_P00 = 0, P0 = 0,
+			...
+			GPIO_P34 = 34,P34 = 34,
+			GPIO_DUMMY = 0xff,
+		}GPIO_Pin_e;
+	GPIO_ioe 
+		GPIO输入输出配置
+			IE 配置为输入
+			OEN 配置为输出
+	BitAction_e 
+		IO pin配置为GPIO模式或者配置为功能pin
+			Bit_DISABLE	配置为GPIO模式
+			Bit_ENABLE	配置为功能pin
+	IO_Pull_Type_e
+		配置pin的上下拉模式
+			FLOATING	配置为无上下拉，pin悬空
+			WEAK_PULL_UP	配置为弱上拉
+			STRONG_PULL_UP  配置为强上拉
+			PULL_DOWN	配置为下拉
+	IO_Wakeup_Pol_e
+		配置pin的唤醒极性，上升沿唤醒或者下降沿唤醒
+			POSEDGE		配置为上升沿唤醒
+			NEGEDGE		配置为下降沿唤醒
+	Fmux_Type_e
+		配置pin的功能设置
+	
+	gpioin_Hdl_t 
+		GPIO输入模式中的回调函数原型
+		
+	APIs
+	int hal_gpio_init(void); // GPIO模块初始化，初始化硬件，使能中断，配置中断优先级等等。
+		该函数需要在系统初始化时候设置，一般是在hal_init()函数中调用
+	void hal_gpio_wakeup_set(GPIO_Pin_e pin,IO_Wakeup_Pol_e type); //配置GPIO唤醒模式：上升沿或下降沿唤醒
+	void hal_gpio_pin_init(GPIO_Pin_e pin,GPIO_ioe type); // 配置为GPIO模式，输入或者输出
+	void hal_gpio_write(GPIO_Pin_e pin,uint8_t en); // 向某一个GPIO写1或0
+	uint32_t hal_gpio_read(GPIO_Pin_e pin); // 读取某一个GPIO的值
+	int hal_gpio_cfg_analog_io(GPIO_Pin_e pin, BitAction_e value); // 配置IO为analog模式
+	int hal_gpio_pull_set(GPIO_Pin_e pin,IO_Pull_Type_e type); // 设置IO的上下拉
+	int hal_gpio_fmux_set(GPIO_Pin_e pin,Fmux_Type_e type);// 配置IO的功能模式
+	int hal_gpioin_register(GPIO_Pin_e pin,gpioin_Hdl_t posedgeHdl,gpioin_Hdl_t negedgeHdl);
+		注册GPIO的输入模式，该模式下的支持中断和唤醒回调，包括上升沿回调和下降沿回调函数
+	int hal_gpioin_unregister(GPIO_Pin_e pin);
+		注销GPIO的输入模式，该模式下支持中断和唤醒回调，包括上升沿回调和下降沿回调函数，注销之后这些功能无效
+	int hal_gpioin_enable(GPIO_Pin_e pin);
+		对于已经注册为gpioin的pin，如果该pin已经停用，通过该函数可以启用gpioin功能
+	int hal_gpioin_disable(GPIO_Pin_e pin);
+		对于已经注册为gpioin的pin，如果该pin已经使能，通过该函数可以停止gpioin功能
+		
+
+
+
+
+
+PHY622X低功耗的功能在PWR_MGR模块实现。
+有四类功耗模式：
+	普通模式：
+	CPU休眠模式：
+	深度休眠模式：
+	standby模式：
+	关机模式：
+PWR_MGR模块API
+	数据结构和类型
+	MODULE_e类型
+	/*mcu_phy_bumbee.h中定义了下列module ID*/
+	typedef enum{
+		MOD_NONE   = 0,MOD_CK802_CPU =0,
+		MOD_DMA    = 3,
+		...
+		MOD_USR8   = MOD_USR0+8,
+	}MODULE_e;
+	
+	pwrmgr_Ctx_t 
+	PWR_MGR模块为每一个注册的模块（与MODULE_e对应）维护一个
+	该结构体类型的变量。最多10个。
+	typedef struct_pwrmgr_Context_t{
+		MODULE_e 	module_id;
+		bool 		lock; // 为TURE时表示禁止休眠，反之，允许休眠
+		pwrmgr_Hdl_t sleep_handler;	//该模块对应的进入休眠前会被调用
+		的回调函数
+		pwrmgr_Hdl_t wakeup_handler; //该模块对应的唤醒之前会被调用的
+		回调函数
+	}pwrmgr_Ctx_t;
+	
+	pwroff_cfg_t 
+	在系统调用hal_pwrmgr_poweroff()API进入关机之前，需要设置的唤醒源
+	（GPIO pin）和触发方式保存在该类型的变量中。
+	typedef struct{
+		gpio_pin_e pin;
+		gpio_polarity_e type; //POL_FALLING or POL_RISING 
+	}pwroff_cfg_t;
+	
+	APIs
+	int hal_pwrmgr_init(void); // 模块初始化函数
+	bool hal_pwrmgr_is_lock(MODULE_e mod);  // 查询模块mod的lock状态。TRUE：禁止休眠，FALSE：使能休眠
+	int hal_pwrmgr_lock(MODULE_e mod);  // 设置模块mod的lock为TRUE，并禁止休眠
+	int hal_pwrmgr_unlock(MODULE_e mod); // 设置模块mod的lock为FALSE，并使能休眠
+	int hal_pwrmgr_register(MODULE_e mod, pwrmgr_Hdl_t sleepHandle,pwrmgr_Hdl_t wakeupHandle);
+		注册模块mod，并提供相应的休眠/唤醒回调函数
+	int hal_pwrmgr_unregister(MODULE_e mod);
+		取消注册模块mod 
+	int hal_pwrmgr_wakeup_process(void)__attribute__((weak));
+	int hal_pwrmgr_sleep_process(void)__attribute__((weak));
+		休眠/唤醒过程中PWR_MGR模块定义的处理函数，应用程序不需要也不
+		应该调用它们
+	int hal_pwrmgr_RAM_retention(uint32_t sram);
+		配置需要保持的RAM区域，可选的有RET_SRAM0 | RET_SRAM1 | RET_SRAM2 
+	int hal_pwrmgr_RAM_retention_clr(void);
+	int hal_pwrmgr_RAM_retention_set(void);
+		使能/清除对配置的RAM区域的保持（retention）功能
+	int hal_pwrmgr_LowCurrentLdo_enable(void);
+	int hal_pwrmgr_LowCurrentLdo_disable(void);
+		使能/禁用调节LowCurrentLDO的输出电压
+	int hal_pwrmgr_poweroff(pwroff_cfg_t *pcfg, uint8_t wakeup_pin_num);
+		配置唤醒源后系统进入关机模式
+	void system_on_handler(GPIO_Pin_e pin,uint32_t timer);
+		关机模式下，系统唤醒处理函数
+低功耗使用注意事项
+·配置CFG_SLEEP_MODE宏
+	在工程中需要设置 CFG_SLEEP_MODE=PWR_MODE_SLEEP 以使能休眠模式，而在其它
+	模式下系统将不会进入休眠	
+·初始化 pwrmgr 模块：	
+	若要使用低功耗模式，在系统初始化时须调用 hal_pwrmgr_init()以初始化pwrmgr模块
+·配置不同 RAM 的 retention 属性
+	若要使用低功耗模式，在系统初始化时需要调用 hal_pwrmgr_RAM_retention()以在系统
+	休眠后保留对应 memory 区域的内容。可选的 RAM 区域有 RET_SRAM0，RET_SRAM1，和
+	RET_SRAM2，用户根据需要自行指定要保留的 RAM 区域
+·选择模块 ID 并注册休眠或唤醒回调函数
+	PHY62 系列 SDK 在 mcu_phy_bumbee.h 文件中定义了一些 MODULE_e 类型的模块名
+	/ID，在 pwrmgr 模块中作为模块 ID 使用。APP task 可以在 MOD_USR1 和 MOD_USR8 之间
+	任选一个作为模块 ID 使用。
+	若要使用低功耗模式，APP task 在初始化时需要调用以下函数进行注册：
+	hal_pwrmgr_register(MODULE_e mod, pwrmgr_Hdl_t sleepHandle, pwrmgr_Hdl_t wakeupHandle);
+	其中 mod 就是模块 ID，是必须项，在 MOD_USR1 和 MOD_USR8 之间任选一个即可；
+	sleepHandle()和 wakeupHandle ()分别对应的是可选的休眠和唤醒的回调函数。
+	一个常用的做法是：用户可以在 sleepHandle()函数中做一些休眠唤醒使用的 pin 和相
+	应属性的设置；而在 wakeupHandle()函数中做唤醒源的判定和初始化，以便系统唤醒后能
+	恢复回到休眠前的状态。
+·控制是否允许 APP task 进入休眠	
+	在使用低功耗模式时，APPtask 可以调用 pwrmgr 模块提供的下列接口来查询或控制是
+	否允许进入休眠
+	hal_pwrmgr_is_lock(MODULE_e mod);  // 查询是否允许模块进入休眠
+	hal_pwrmgr_is_lock(MODULE_e mod); // 禁止模块进入休眠
+	hal_pwrmgr_is_unlock(MODULE_e mod); // 允许模块进入休眠
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

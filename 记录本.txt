@@ -717,4 +717,51 @@ keep going
 
 
 
+知识没有用起来
+没有及时复习
+只有输入没有输出
+
+
+枚举定义：
+enum DAY{
+	MON,
+	TUR,
+};
+①
+int main()		// 定义指针
+{
+	int a = 10;
+	enum DAY *Day;
+	Day = (enum DAY *)&a;
+	printf("%d\n",*Day);
+	return 0;
+}
+②
+int main()
+{
+	//enum DAY Day = MON;		// 定义枚举变量时赋值
+	enum DAY Day;				// 定义时不赋值，后面赋值
+	Day = MON;
+	printf("%d\n",Day);
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
