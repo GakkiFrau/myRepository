@@ -1,5 +1,5 @@
 CPU：
-CPU：
+GPU：
 ALU：
 PC：
 USB：
