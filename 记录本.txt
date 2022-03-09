@@ -712,7 +712,7 @@ keep going
 《C primer plus》
 《C++ primer plus》
 《UNIX网络编程》
-《零基础写编程系列之C语音》
+《零基础写编程系列之C语言》
 仔细研究Apache源码
 
 
