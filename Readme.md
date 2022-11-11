@@ -189,7 +189,7 @@ TIMER3 ~ TIMER4（6个CC寄存器）
 两种时钟输入模式    
     1MHz模式(PCLK1M)和16MHz模式(PCLK16M)  
 分频器   
-    $$f_{TIMER} = {\frac{HFCLK}{2^{PRESCALER}}}$$
+    $$f_TIMER = {\frac{HFCLK}{2^{PRESCALER}}}$$
 工作模式(MODE Register)  
     定时器模式(timer)和计数器模式(counter)  
 比较/捕获功能  
